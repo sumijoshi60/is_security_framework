@@ -1,0 +1,242 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  AUDITOR
+  VIEWER
+}
+
+enum AssessmentStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  ARCHIVED
+}
+
+enum ActionPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ActionStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id              String       @id @default(uuid())
+  email           String       @unique
+  passwordHash    String       @map("password_hash")
+  name            String
+  role            Role         @default(VIEWER)
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+  assessments     Assessment[]
+  auditLogs       AuditLog[]
+  evidence        Evidence[]
+  assignedActions ActionItem[] @relation("ActionAssignee")
+  createdActions  ActionItem[] @relation("ActionCreator")
+
+  @@map("users")
+}
+
+model MaturityDefinition {
+  id          String @id @default(uuid())
+  level       String @unique
+  numericValue Int   @map("numeric_value")
+  description String
+  sortOrder   Int    @map("sort_order")
+
+  @@map("maturity_definitions")
+}
+
+model Domain {
+  id                String                   @id @default(uuid())
+  code              String                   @unique
+  name              String
+  description       String                   @default("")
+  weight            Float                    @default(1.0)
+  sortOrder         Int                      @map("sort_order")
+  controls          Control[]
+  assessmentWeights AssessmentDomainWeight[]
+
+  @@map("domains")
+}
+
+model Control {
+  id                String                    @id @default(uuid())
+  controlId         String                    @unique @map("control_id")
+  name              String
+  description       String                    @default("")
+  weight            Float                     @default(1.0)
+  domainId          String                    @map("domain_id")
+  sortOrder         Int                       @map("sort_order")
+  domain            Domain                    @relation(fields: [domainId], references: [id], onDelete: Cascade)
+  responses         Response[]
+  assessmentWeights AssessmentControlWeight[]
+
+  @@map("controls")
+}
+
+model Assessment {
+  id             String                    @id @default(uuid())
+  title          String
+  status         AssessmentStatus          @default(DRAFT)
+  createdBy      String                    @map("created_by")
+  templateId     String?                   @map("template_id")
+  createdAt      DateTime                  @default(now()) @map("created_at")
+  updatedAt      DateTime                  @updatedAt @map("updated_at")
+  user           User                      @relation(fields: [createdBy], references: [id])
+  template       ChecklistTemplate?        @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  responses      Response[]
+  auditLogs      AuditLog[]
+  domainWeights  AssessmentDomainWeight[]
+  controlWeights AssessmentControlWeight[]
+
+  @@map("assessments")
+}
+
+model Response {
+  id                   String       @id @default(uuid())
+  assessmentId         String       @map("assessment_id")
+  controlId            String       @map("control_id")
+  maturityLevel        String       @map("maturity_level")
+  targetMaturityLevel  String?      @map("target_maturity_level")
+  notes                String       @default("")
+  updatedAt            DateTime     @updatedAt @map("updated_at")
+  assessment           Assessment   @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  control              Control      @relation(fields: [controlId], references: [id], onDelete: Cascade)
+  evidence             Evidence[]
+  actionItems          ActionItem[]
+
+  @@unique([assessmentId, controlId])
+  @@map("responses")
+}
+
+model AuditLog {
+  id           String     @id @default(uuid())
+  assessmentId String     @map("assessment_id")
+  userId       String     @map("user_id")
+  action       String
+  details      Json?
+  createdAt    DateTime   @default(now()) @map("created_at")
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  user         User       @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}
+
+model AssessmentDomainWeight {
+  id           String     @id @default(uuid())
+  assessmentId String     @map("assessment_id")
+  domainId     String     @map("domain_id")
+  weight       Float
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  domain       Domain     @relation(fields: [domainId], references: [id], onDelete: Cascade)
+
+  @@unique([assessmentId, domainId])
+  @@map("assessment_domain_weights")
+}
+
+model AssessmentControlWeight {
+  id           String     @id @default(uuid())
+  assessmentId String     @map("assessment_id")
+  controlId    String     @map("control_id")
+  weight       Float
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  control      Control    @relation(fields: [controlId], references: [id], onDelete: Cascade)
+
+  @@unique([assessmentId, controlId])
+  @@map("assessment_control_weights")
+}
+
+// --- Checklist Template models ---
+
+model ChecklistTemplate {
+  id          String            @id @default(uuid())
+  name        String
+  description String            @default("")
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+  domains     TemplateDomain[]
+  assessments Assessment[]
+
+  @@map("checklist_templates")
+}
+
+model TemplateDomain {
+  id          String            @id @default(uuid())
+  templateId  String            @map("template_id")
+  code        String
+  name        String
+  description String            @default("")
+  weight      Float             @default(1.0)
+  sortOrder   Int               @default(0) @map("sort_order")
+  template    ChecklistTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  controls    TemplateControl[]
+
+  @@unique([templateId, code])
+  @@map("template_domains")
+}
+
+model TemplateControl {
+  id               String         @id @default(uuid())
+  templateDomainId String         @map("template_domain_id")
+  controlId        String         @map("control_id")
+  name             String
+  description      String         @default("")
+  weight           Float          @default(1.0)
+  sortOrder        Int            @default(0) @map("sort_order")
+  templateDomain   TemplateDomain @relation(fields: [templateDomainId], references: [id], onDelete: Cascade)
+
+  @@unique([templateDomainId, controlId])
+  @@map("template_controls")
+}
+
+// --- Evidence & Action Items ---
+
+model Evidence {
+  id          String   @id @default(uuid())
+  responseId  String   @map("response_id")
+  fileName    String   @map("file_name")
+  filePath    String   @map("file_path")
+  fileSize    Int      @map("file_size")
+  mimeType    String   @map("mime_type")
+  description String   @default("")
+  uploadedBy  String   @map("uploaded_by")
+  uploadedAt  DateTime @default(now()) @map("uploaded_at")
+  response    Response @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [uploadedBy], references: [id])
+
+  @@map("evidence")
+}
+
+model ActionItem {
+  id          String         @id @default(uuid())
+  responseId  String         @map("response_id")
+  title       String
+  description String         @default("")
+  priority    ActionPriority @default(MEDIUM)
+  status      ActionStatus   @default(OPEN)
+  assignedTo  String?        @map("assigned_to")
+  dueDate     DateTime?      @map("due_date")
+  createdBy   String         @map("created_by")
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+  response    Response       @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  assignee    User?          @relation("ActionAssignee", fields: [assignedTo], references: [id])
+  creator     User           @relation("ActionCreator", fields: [createdBy], references: [id])
+
+  @@map("action_items")
+}

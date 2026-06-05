@@ -1,0 +1,4 @@
+/* App-level styles handled by Tailwind */
+button {
+    cursor: pointer;
+}

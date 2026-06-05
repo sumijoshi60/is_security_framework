@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx prisma db push:*)",
+      "Bash(npx tsc:*)",
+      "Bash(echo:*)",
+      "Bash(npm run build:*)",
+      "Bash(lsof:*)",
+      "Bash(xargs kill:*)",
+      "Bash(npm run dev:*)",
+      "Bash(brew services start:*)",
+      "Bash(pg_ctl:*)",
+      "Bash(brew services:*)",
+      "Bash(docker info:*)",
+      "Bash(docker run:*)",
+      "Bash(docker start:*)",
+      "Bash(curl:*)",
+      "Bash(npm install:*)"
+    ]
+  }
+}

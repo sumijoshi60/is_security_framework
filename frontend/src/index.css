@@ -1,0 +1,196 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --color-background: #ffffff;
+  --color-foreground: #0a0a0a;
+  --color-card: #ffffff;
+  --color-card-foreground: #0a0a0a;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #0a0a0a;
+  --color-primary: #1d4ed8;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #f1f5f9;
+  --color-secondary-foreground: #0f172a;
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+  --color-accent: #f1f5f9;
+  --color-accent-foreground: #0f172a;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+  --color-border: #e2e8f0;
+  --color-input: #e2e8f0;
+  --color-ring: #1d4ed8;
+  --radius: 0.5rem;
+
+  --color-maturity-unknown: #9ca3af;
+  --color-maturity-nonexistent: #ef4444;
+  --color-maturity-initial: #f97316;
+  --color-maturity-limited: #eab308;
+  --color-maturity-defined: #3b82f6;
+  --color-maturity-managed: #22c55e;
+  --color-maturity-optimized: #059669;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Report styles */
+.report-content {
+  line-height: 1.8;
+  color: #1a1a1a;
+}
+
+.report-content h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #0f172a;
+  border-bottom: 2px solid #1d4ed8;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+  margin-top: 2rem;
+}
+
+.report-content h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1e293b;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 0.4rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.report-content h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #334155;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.report-content p {
+  margin-bottom: 0.75rem;
+  color: #374151;
+}
+
+.report-content strong {
+  color: #0f172a;
+}
+
+.report-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0 1.5rem;
+  font-size: 0.875rem;
+}
+
+.report-content thead th {
+  background-color: #f8fafc;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.03em;
+}
+
+.report-content tbody td {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e2e8f0;
+  color: #374151;
+}
+
+.report-content tbody tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+.report-content tbody tr:hover {
+  background-color: #f1f5f9;
+}
+
+.report-content ul, .report-content ol {
+  margin: 0.5rem 0 1rem;
+  padding-left: 1.5rem;
+}
+
+.report-content li {
+  margin-bottom: 0.35rem;
+  color: #374151;
+}
+
+.report-content blockquote {
+  border-left: 3px solid #1d4ed8;
+  padding: 0.5rem 1rem;
+  margin: 1rem 0;
+  background-color: #f8fafc;
+  color: #475569;
+  font-style: normal;
+}
+
+.report-content hr {
+  border: none;
+  border-top: 1px solid #e2e8f0;
+  margin: 2rem 0;
+}
+
+.report-content code {
+  background-color: #f1f5f9;
+  padding: 0.15rem 0.35rem;
+  border-radius: 0.25rem;
+  font-size: 0.85em;
+  color: #1d4ed8;
+}
+
+/* Print styles for report PDF download */
+@media print {
+  aside, nav, .no-print {
+    display: none !important;
+  }
+  main {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+  body {
+    background: white;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .report-content {
+    max-width: 100% !important;
+    font-size: 11pt;
+    line-height: 1.6;
+  }
+  .report-content h1 {
+    font-size: 18pt;
+  }
+  .report-content h2 {
+    font-size: 14pt;
+    page-break-after: avoid;
+  }
+  .report-content h3 {
+    font-size: 12pt;
+    page-break-after: avoid;
+  }
+  .report-content table {
+    page-break-inside: avoid;
+    font-size: 9pt;
+  }
+  .report-content thead th {
+    background-color: #f8fafc !important;
+  }
+  .report-content tbody tr:nth-child(even) {
+    background-color: #f8fafc !important;
+  }
+}
