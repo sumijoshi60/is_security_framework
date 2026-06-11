@@ -15,9 +15,9 @@ Every control is rated on a 7-point maturity scale. "Not Applicable" controls ar
 | Not Applicable | —    | Excluded from scoring                                         |
 
 ## How Scoring Works ##
-Control Score = maturity rating (0-6)
-Domain Score = weighted average of its controls' scores
-Overall Score = weighted average of domain scores
+Control Score = maturity rating (0-6)\
+Domain Score = weighted average of its controls' scores\
+Overall Score = weighted average of domain scores\
 Max Score = 6 (Optimized)
 
 ## Control Weight Scale ##
