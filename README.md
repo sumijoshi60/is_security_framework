@@ -50,8 +50,8 @@ Domain A8 (Technological Controls) with 3 controls:
 | A.8.2   | 3.0  | Initial        | 2      |
 | A.8.3   | 1.0  | Not Applicable | —      |
 
-Domain A8 = (5 x 3.0 + 2 x 3.0) / (3.0 + 3.0)
-= (15 + 6) / 6
+Domain A8 = (5 x 3.0 + 2 x 3.0) / (3.0 + 3.0)\
+= (15 + 6) / 6\
 = 3.50 out of 6
 
 
