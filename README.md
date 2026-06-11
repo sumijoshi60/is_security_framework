@@ -1,4 +1,4 @@
-# is_security_framework ##
+# isms_audit_toolkit ##
 This is a tool to perform security audits of information systems.
 Fill out the checklist of organization domains and it's controls. 
 Every control is rated on a 7-point maturity scale. "Not Applicable" controls are excluded from scoring.
